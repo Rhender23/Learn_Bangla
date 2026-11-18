@@ -447,7 +447,7 @@ function buildLesson(u, li) {
   const earlier = [...new Set(u.lessons.slice(0, li).flat())].filter(id => ITEMS[id] && !items.includes(id));
   const pool = [...new Set([...items, ...earlier])];
   const ex = [];
-  items.filter(id => !S.seen[id]).forEach(id => { ex.push({type: "intro", id}); ex.push(makeEx(chooseType(id, [1, 0.15, 0], null), id, pool)); });
+  items.filter(id => !S.rev[id]).forEach(id =>  /* introduce until the phrase has been through a finished session */ { ex.push({type: "intro", id}); ex.push(makeEx(chooseType(id, [1, 0.15, 0], null), id, pool)); });
   const introLen = ex.length, rest = Math.max(6, 12 - ex.length);
   ex.push(...buildMixed(spread([...items, ...items, ...shuf(earlier).slice(0, 2)], rest), w, pool));
   insertMatch(ex, shuf(pool), introLen + Math.floor(rest / 2));
@@ -618,7 +618,7 @@ function renderEx() {
   let sheet = `<span></span>${checkBtn}`, autoplay = false, focus = null;
   switch (e.type) {
     case "intro":
-      S.seen[e.id] = 1; save(); if (!R.newIds.includes(e.id)) R.newIds.push(e.id);
+      if (!R.newIds.includes(e.id)) R.newIds.push(e.id);
       h += `<div class="kind">New phrase</div><div class="phrase">${hint(it.rom, true)}</div><div class="sub">${esc(it.en)}</div>${audioBtns(e.id)}`;
       sheet = `<span class="msg sub">Tap underlined words for their meaning.</span><button id="primary" onclick="nextEx()">Continue</button>`;
       autoplay = true; break;
